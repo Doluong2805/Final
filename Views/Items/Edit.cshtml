@@ -1,0 +1,101 @@
+﻿@model Final.Models.Item
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Edit</h1>
+
+<h4>Item</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="Type" class="control-label"></label>
+                <input id="typeDropdown" readonly asp-for="Type" class="form-control mt-1 mb-1" />
+                <span asp-validation-for="Type" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Title" class="control-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Author" class="control-label"></label>
+                <input asp-for="Author" class="form-control" />
+                <span asp-validation-for="Author" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PublicationDate" class="control-label"></label>
+                <input asp-for="PublicationDate" class="form-control" />
+                <span asp-validation-for="PublicationDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Price" class="control-label"></label>
+                <input asp-for="Price" class="form-control" value="@Model.Price.ToString("F0")" />
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Quantity" class="control-label"></label>
+                <input readonly asp-for="Quantity" class="form-control" />
+                <span asp-validation-for="Quantity" class="text-danger"></span>
+            </div>
+            <div class="form-group" id="numberOfPagesInput" style="display: none;">
+                <label asp-for="NumberOfPages" ></label>
+                <input asp-for="NumberOfPages" class="form-control" />
+                <span asp-validation-for="NumberOfPages" class="text-danger"></span>
+            </div>
+            <div class="form-group" id="runTimeInput" style="display: none;">
+                <label asp-for="RunTime" ></label>
+                <input asp-for="RunTime" class="form-control" />
+                <span asp-validation-for="RunTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-outline-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a class="btn btn-outline-warning" asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        // Lấy thẻ select theo id
+        var typeDropdown = document.getElementById("typeDropdown");
+        // Lấy thẻ div chứa dòng nhập NumberOfPages
+        var numberOfPagesInput = document.getElementById("numberOfPagesInput");
+        // Lấy thẻ div chứa dòng nhập RunTime
+        var runTimeInput = document.getElementById("runTimeInput");
+
+        // Lắng nghe sự kiện khi người dùng thay đổi giá trị của select
+        typeDropdown.addEventListener("change", function () {
+            // Lấy giá trị được chọn
+            var selectedValue = typeDropdown.value;
+
+            // Kiểm tra giá trị được chọn và hiển thị hoặc ẩn các dòng nhập phù hợp
+            if (selectedValue === "Book") {
+                numberOfPagesInput.style.display = "block";
+                runTimeInput.style.display = "none";
+            } else if (selectedValue === "DVD") {
+                numberOfPagesInput.style.display = "none";
+                runTimeInput.style.display = "block";
+            } else {
+                numberOfPagesInput.style.display = "none";
+                runTimeInput.style.display = "none";
+            }
+        });
+
+        window.addEventListener("load", function () {
+            // Gọi sự kiện change của typeDropdown để áp dụng logic hiển thị ban đầu
+            typeDropdown.dispatchEvent(new Event("change"));
+        });
+    </script>
+}

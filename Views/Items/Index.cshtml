@@ -1,0 +1,128 @@
+﻿@model IEnumerable<Final.Models.Item>
+
+@{
+    //ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Index</h1>
+<form asp-controller="Items" asp-action="Index" method="get">
+    <div class="form-group" style="display: flex">
+        <input type="text" name="title" class="form-control" style="flex: 1; margin-right: 10px; margin-left: 800px"
+               placeholder="Enter search term...">
+        <button style="flex: 0" type="submit" class="btn btn-primary">Search</button>
+    </div>
+</form>
+<p>
+    <a class="btn btn-outline-primary" asp-action="Create">Create New</a>
+</p>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Type)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Author)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PublicationDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Price)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Quantity)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AvailableQuantity)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NumberOfPages)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RunTime)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Type)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Author)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PublicationDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Quantity)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AvailableQuantity)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NumberOfPages)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RunTime)
+                </td>
+                <td>
+                    <a class="btn btn-outline-warning" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a class="btn btn-outline-primary" asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a class="btn btn-outline-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<nav class="d-flex justify-content-center @(ViewBag.TotalPages > 0 ? "" : "d-none")">
+    <ul class="pagination pagination-sm">
+        <li class="page-item @(ViewBag.CurrentPage <= 1 ? "disabled" : "")">
+            <a class="page-link"
+               asp-route-pageNumber="@(ViewBag.CurrentPage - 1)"
+               asp-route-title="@ViewBag.Title"
+               aria-label="Previous">
+                <span aria-hidden="true">
+                    <i class="bi bi-chevron-double-left"></i>
+                </span>
+            </a>
+        </li>
+        @for(var i = 0; i < ViewBag.TotalPages; i++)
+        {
+            var pageNumber = i + 1;
+            <li class="page-item @(ViewBag.CurrentPage == pageNumber ? "active" : "")">
+                <a class="page-link"
+                   asp-route-pageNumber="@pageNumber"
+                   asp-route-title="@ViewBag.Title">
+                    @pageNumber
+                </a>
+            </li>
+        }
+        <li class="page-item @(ViewBag.CurrentPage >= ViewBag.TotalPages ? "disabled" : "")">
+            <a class="page-link"
+               asp-route-title="@ViewBag.Title"
+               asp-route-pageNumber="@(ViewBag.CurrentPage + 1)"
+               aria-label="Next">
+                <span aria-hidden="true">
+                    <i class="bi bi-chevron-double-right"></i>
+                </span>
+            </a>
+        </li>
+    </ul>
+</nav>
+

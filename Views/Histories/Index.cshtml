@@ -1,0 +1,109 @@
+﻿@model IEnumerable<Final.Models.History>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Index</h1>
+<div class="col-auto mb-2">
+    <form asp-action="Index">
+        <div class="input-group">
+            <select class="form-select" name="borrowerId" asp-items="@ViewBag.BorrowerId">
+                <option selected>--- Select Borrower ---</option>
+            </select>
+            <select class="form-select" name="itemId" asp-items="@ViewBag.ItemId">
+                <option selected>--- Select Item ---</option>
+            </select>
+            <select class="form-select" name="status" asp-items="@ViewBag.Status">
+                <option selected>--- Select Status ---</option>
+            </select>
+            <input type="date" class="form-control" name="borrowDate" placeholder="dd/MM/yyyy">
+            <button type="submit" class="btn btn-info text-white">
+                <i class="bi bi-search"></i>
+            </button>
+        </div>
+    </form>
+</div>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>
+                Borrower
+            </th>
+            <th>
+                Borrow Date
+            </th>
+            <th>
+                Status
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Borrower.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.BorrowDate)
+                </td>
+                <td>
+                    @{
+                        string statusText = item.Status == 0 ? "Opened" : "Closed";
+                    }
+                    @statusText
+                </td>
+                <td>
+                    <a class="btn btn-outline-primary" asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a class="btn btn-outline-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<nav class="d-flex justify-content-center @(ViewBag.TotalPages > 0 ? "" : "d-none")">
+    <ul class="pagination pagination-sm">
+        <li class="page-item @(ViewBag.CurrentPage <= 1 ? "disabled" : "")">
+            <a class="page-link"               
+               asp-route-borrowerId="@ViewBag.BorrowerId1"
+               asp-route-status="@ViewBag.Status1"
+               asp-route-itemId="@ViewBag.ItemId1"
+               asp-route-pageNumber="@(ViewBag.CurrentPage - 1)"
+               asp-route-borrowDate="@ViewBag.BorrowDate1"
+               aria-label="Previous">
+                <span aria-hidden="true">
+                    <i class="bi bi-chevron-double-left"></i>
+                </span>
+            </a>
+        </li>
+        @for(var i = 0; i < ViewBag.TotalPages; i++)
+        {
+            var pageNumber = i + 1;
+            <li class="page-item @(ViewBag.CurrentPage == pageNumber ? "active" : "")">
+                <a class="page-link"
+                   asp-route-pageNumber="@pageNumber"
+                   asp-route-borrowerId="@ViewBag.BorrowerId1"
+                   asp-route-status="@ViewBag.Status1"
+                   asp-route-borrowDate="@ViewBag.BorrowDate1"
+                   asp-route-itemId="@ViewBag.ItemId1">
+                    @pageNumber
+                </a>
+            </li>
+        }
+        <li class="page-item @(ViewBag.CurrentPage >= ViewBag.TotalPages ? "disabled" : "")">
+            <a class="page-link"
+               asp-route-borrowerId="@ViewBag.BorrowerId1"
+               asp-route-status="@ViewBag.Status1"
+               asp-route-borrowDate="@ViewBag.BorrowDate1"
+               asp-route-itemId="@ViewBag.ItemId1"
+               asp-route-pageNumber="@(ViewBag.CurrentPage + 1)"
+               aria-label="Next">
+                <span aria-hidden="true">
+                    <i class="bi bi-chevron-double-right"></i>
+                </span>
+            </a>
+        </li>
+    </ul>
+</nav>

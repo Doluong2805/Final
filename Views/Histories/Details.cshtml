@@ -1,0 +1,40 @@
+﻿@model HistoryViewModel
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Details</h1>
+
+@*<div>Id: @Model.Id</div>*@
+<div>Date: @Model.BorrowDate</div>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.BorrowItems.First().Item.Title)</th>
+            <th>@Html.DisplayNameFor(model => model.BorrowItems.First().Quantity)</th>
+            <th>@Html.DisplayNameFor(model => model.BorrowItems.First().Cost)</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var borrowedItem in Model.BorrowItems)
+        {
+            <tr>
+                <td>@borrowedItem.Item.Title</td>
+                <td>@borrowedItem.Quantity</td>
+                <td>@borrowedItem.Cost</td>
+                <td>
+                    @if(borrowedItem.ReturnedQuanyity < borrowedItem.Quantity)
+                    {
+                        <a class="btn btn-outline-success" asp-action="Return" asp-route-historyId="@Model.Id" asp-route-itemId="@borrowedItem.Item.Id">Return</a>
+                    }
+                    <a class="btn btn-outline-warning" asp-action="Index">Back to List</a>
+                </td>
+            </tr>
+        }
+
+    </tbody>
+</table>

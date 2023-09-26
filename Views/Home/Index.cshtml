@@ -1,0 +1,257 @@
+﻿@model Final.Models.I_BI_ViewModel
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 mt-3">
+            <h2>List of Items in Library</h2>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.listItem.FirstOrDefault().Type)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.listItem.FirstOrDefault().Title)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.listItem.FirstOrDefault().Price)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.listItem.FirstOrDefault().AvailableQuantity)
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="available-items-table-body">
+                    @*@foreach(var item in Model.listItem)
+                    {
+                    <tr>
+                    <td>
+                    @Html.DisplayFor(modelItem => item.Type)
+                    </td>
+                    <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                    </td>
+                    <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                    </td>
+                    <td class="available-quantity">
+                    @Html.DisplayFor(modelItem => item.AvailableQuantity)
+                    </td>
+                    asp-route-itemid="@item.Id" asp-action="AddToBorrowedItems"
+                    <td>
+                    <a data-itemId="@item.Id" class="btn btn-success add-button">Add</a>
+                    </td>
+                    </tr>
+                    }*@
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-6 mt-3">
+            <h2>List of borrowed items</h2>
+            <table id="borrowed-items-table" class="table table-bordered" style="margin-top: 5px">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.listItem.FirstOrDefault().Title)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.listItem.FirstOrDefault().Price)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.borrowItemVM.FirstOrDefault().Quantity)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.borrowItemVM.FirstOrDefault().Cost)
+                        </th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="borrowed-items-table-body">
+                    @*                    @if(ViewBag.data != null)
+                    {
+                    foreach(var borrowItem in ViewBag.data)
+                    {
+                    <tr>
+                    <td>@borrowItem.ItemName</td>
+                    <td>@borrowItem.Price</td>
+                    <td>@borrowItem.Quantity</td>
+                    <td>@borrowItem.Cost</td>
+                    <td>
+                    <a asp-action="Editbi" asp-controller="Home" asp-route-itemId="@borrowItem.ItemId" asp-route-newQuantity="@borrowItem.Quantity" class="btn btn-secondary edit-button">Edit</a>
+                    <a asp-action="Deletebi" asp-route-itemId="@borrowItem.ItemId" class="btn btn-danger delete-button">Delete</a>
+                    </td>
+                    </tr>
+                    }
+                    }*@
+                </tbody>
+            </table>
+            <form class="input-group gap-5 mt-5">
+                <select id="SelectedBorrowerId" class="form-control" asp-items="@ViewBag.BorrowerList">
+                    <option value="">-- Chọn một Borrower --</option>
+                </select>
+
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Total Cost</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td id="total-cost">@ViewBag.TotalCost</td>
+                            <td>
+                                <button type="submit" class="btn btn-info" id="confirm-borrow-button">Xác nhận mượn</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            var message = "@TempData["Message"]";
+            if (message) {
+                alert(message);
+            }
+        });
+        loadData();
+        loadListItem();
+
+        // Gọi hàm xác nhận mượn khi nhấn nút "Xác nhận mượn"
+        $('#confirm-borrow-button').click(function () {
+            confirmBorrow();
+        });
+
+        function confirmBorrow() {
+            var selectedBorrowerId = $('#SelectedBorrowerId').val(); // Lấy giá trị từ dropdown
+            $.ajax({
+                url: '/Home/ConfirmBorrow',
+                type: 'POST',
+                data: { SelectedBorrowerId: selectedBorrowerId },
+                success: function (data) {
+                    alert(data.message);
+                    loadData();
+                    //location.reload(); // Refresh trang sau khi xác nhận mượn thành công
+                },
+                error: function () {
+                    alert('An error occurred while confirming borrowing.');
+                }
+            });
+        }
+
+        function loadData() {
+            $.ajax({
+                url: '/Home/LoadBorrowedItems',
+                type: 'GET',
+                success: function (data) {
+                    if (data) {
+                        $("#borrowed-items-table-body").empty();
+                        $.each(data.borrowedItems, function (index, item) {
+                            var row = "<tr data-itemId='" + item.ItemId + "'>" +
+                                "<td>" + item.ItemName + "</td>" +
+                                "<td>" + item.Price + "</td>" +
+                                "<td>" + item.Quantity + "</td>" +
+                                "<td>" + item.Cost + "</td>" +
+                                "<td>" +
+                                "<a asp-route-itemId='" + item.ItemId + "' href='/Home/Editbi/" + item.ItemId + "' class='btn btn-secondary'>Edit</a> " +
+                                "<a data-itemId='" + item.ItemId + "' class='btn btn-danger delete-button'>Delete</a> " +
+                                "</td>" +
+                                "</tr>";
+                            $("#borrowed-items-table-body").append(row);
+                        });
+                        $('#total-cost').text('Total Cost: ' + data.totalCost);
+
+                        $("a.delete-button").click(function (event) {
+                            event.preventDefault();
+                            var itemId = $(this).data("itemid");
+                            // Perform the Ajax request for deletion here
+                            $.ajax({
+                                url: '/Home/Deletebi',
+                                type: 'GET',
+                                data: { itemId: itemId },
+                                success: function (data) {
+                                    loadListItem();
+                                    loadData();
+                                    alert(data.message);
+                                },
+                                error: function () {
+                                    alert('An error occurred while deleting the item.');
+                                }
+                            });
+                        });
+                    }
+                },
+                error: function () {
+                    alert('An error occurred while loading borrowed items.');
+                }
+            });
+        }
+
+        function mapEnumToText(enumValue) {
+            switch (enumValue) {
+                case 0:
+                    return "Book";
+                case 1:
+                    return "DVD";
+                // Thêm các trường hợp cho các giá trị enum khác nếu cần
+                default:
+                    return "Magazine";
+            }
+        }
+
+
+        function loadListItem(borrowItem) {
+            $.ajax({
+                url: '/Items/ItemListJson',
+                type: 'POST',
+                success: function (data) {
+                    $("#available-items-table-body").empty();
+                    $.each(data, function (index, item) {
+                        var row =
+                            "<tr data-itemId='" + item.Id + "'>" +
+                            "<td>" + mapEnumToText(item.Type) + "</td>" +
+                            "<td>" + item.Title + "</td>" +
+                            "<td>" + item.Price + "</td>" +
+                            "<td>" + item.AvailableQuantity + "</td>" +
+                            "<td>" +
+                            "<a data-itemId='" + item.Id + "' class='btn btn-secondary add-button'>Add</a> " +
+                            "</td>" +
+                            "</tr>";
+                        $("#available-items-table-body").append(row);
+                    });
+                    $("a.add-button").click(function (event) {
+                        event.preventDefault();
+                        var itemId = $(this).data("itemid");
+
+                        $.ajax({
+                            url: '/Home/AddToBorrowedItems',
+                            type: 'POST',
+                            data: { itemId: itemId },
+                            success: function (data) {
+                                loadData();
+                                loadListItem();
+                                alert(data.message);
+                            },
+                            error: function () {
+                                alert('An error occurred while adding the item.');
+                            }
+                        });
+                    });
+                },
+                error: function () {
+                    alert('An error occurred while calling Editbi (HttpPost).');
+                }
+            });
+        }
+
+    </script>
+}

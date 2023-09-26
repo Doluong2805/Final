@@ -1,0 +1,43 @@
+﻿@model Final.Models.BorrowItemViewModel
+@{
+    ViewData["Title"] = "Editbi"; Layout = "~/Views/Shared/_Layout.cshtml";
+} <h4>BorrowItemViewModel</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        @*asp-route-itemId="@Model.ItemId" asp-route-newQuantity="@Model.Quantity"*@
+        <form asp-action="Editbi" asp-controller="Home" asp-route-itemId="@Model.ItemId" asp-route-newQuantity="@Model.Quantity">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" /> <div class="form-group">
+                <label asp-for="ItemName" class="control-label"></label>
+                <input readonly asp-for="ItemName" class="form-control" />
+                <span asp-validation-for="ItemName" class="text-danger"></span>
+            </div> <div class="form-group">
+                <label asp-for="Quantity" class="control-label"></label>
+                <input asp-for="Quantity" class="form-control" />
+                <span asp-validation-for="Quantity" class="text-danger"></span>
+            </div> 
+            <div class="form-group" style="display: none;">
+                <label asp-for="Price" class="control-label"></label>
+                <input readonly asp-for="Price" class="form-control" value="@($"{Model.Price.ToString("0")}")" />
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div> 
+            <div class="form-group" style="display: none;">
+                <label asp-for="Cost" class="control-label"></label>
+                <input readonly asp-for="Cost" class="form-control" value="@($"{Model.Cost.ToString("0")}")" />
+                <span asp-validation-for="Cost" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div> <a asp-action="Index">Back to List</a> </div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+ }
