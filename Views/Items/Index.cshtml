@@ -1,11 +1,10 @@
 ﻿@model IEnumerable<Final.Models.Item>
 
 @{
-    //ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Index</h1>
+<h1>List Items</h1>
 <form asp-controller="Items" asp-action="Index" method="get">
     <div class="form-group" style="display: flex">
         <input type="text" name="title" class="form-control" style="flex: 1; margin-right: 10px; margin-left: 800px"
@@ -17,7 +16,7 @@
     <a class="btn btn-outline-primary" asp-action="Create">Create New</a>
 </p>
 <table class="table table-bordered">
-    <thead>
+    <thead class="text-center align-middle">
         <tr>
             <th>
                 @Html.DisplayNameFor(model => model.Type)
@@ -46,10 +45,10 @@
             <th>
                 @Html.DisplayNameFor(model => model.RunTime)
             </th>
-            <th></th>
+            <th>Action</th>
         </tr>
     </thead>
-    <tbody>
+    <tbody class ="text-center align-middle">
         @foreach(var item in Model)
         {
             <tr>
