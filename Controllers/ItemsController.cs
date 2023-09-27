@@ -25,10 +25,10 @@ namespace Final.Controllers
         {
             ViewData["Title"] = title;
             var itemquery = _services.GetAll();
-            if(!string.IsNullOrWhiteSpace(title))
-            {
+            //if(!string.IsNullOrWhiteSpace(title))
+            //{
                 itemquery = _services.Search(itemquery,title);
-            }
+            //}
             if(!Convert.ToBoolean(pageNumber))
             {
                 pageNumber = 1;
